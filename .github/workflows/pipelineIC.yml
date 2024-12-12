@@ -30,8 +30,10 @@ jobs:
             if ! grep -q 'id "org.sonarquebe" version "3.3"' build.gradle; then
               sed -i '/id '\''java'\''/a\\\\ id '\''org.sonarquebe'\'' version '\''3.3'\''' build.gradle
               echo "pluggin de sonarcloud añadido a build.gradle"
+              cat build.gradle
             else
               echo "pluggin de sonarcloud ya estaba configurado en build.gradle"
+              cat build.gradle
             fi
 
           else
