@@ -28,7 +28,7 @@ jobs:
             echo "Encontro el archivo build.gradle"
             echo "Verificando configuracion del plugin sonar"
             if ! grep -q 'id "org.sonarquebe" version "3.3"' build.gradle; then
-              sed -i '/id '\''java'\''/a\\\\ id '\''org.sonarquebe'\'' version '\''3.3'\''' build.gradle
+              sed -i "/id 'java'/a\\id 'org.sonarquebe' version '3.3'" build.gradle
               echo "pluggin de sonarcloud añadido a build.gradle"
               cat build.gradle
             else
