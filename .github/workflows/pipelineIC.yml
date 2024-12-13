@@ -45,7 +45,7 @@ jobs:
         id: Validate-project
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          REPO_NAME: ${{ github.event.repository }}
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
           echo "verificando si el proyecto $REPO_NAME existe en sonarCloud"
           response=$(curl -s -o /dev/null -w "%{http_code}" -u "$SONAR_TOKEN:" \
