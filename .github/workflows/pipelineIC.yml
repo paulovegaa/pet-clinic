@@ -40,3 +40,37 @@ jobs:
             echo "NO encontro el archivo build.gradle"
             exit 1
           fi
+
+      - name: Validate and Create SonarCloud Project
+        id: Validate-project
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          REPO_NAME: ${{ github.event.repository }}
+        run: |
+          echo "verificando si el proyecto $REPO_NAME existe en sonarCloud"
+          response=$(curl -s -o /dev/null -w "%{http_code}" -u "$SONAR_TOKEN:" \
+            "https://sonarcloud.io/api/projects/search?projects=$REPO_NAME")
+          
+          if [ "$response" -ne 200 ]; then
+            echo "el proyecto no existe... Creandolo en sonar..."
+            create_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST -u "$SONAR_TOKEN:" \
+              "https://sonarcloud.io/api/projects/create" \
+              -d "name=$REPO_NAME" \
+              -d "project="$REPO_NAME" \
+              -d "organization=paulovegaa" \
+              -d "project=public" )
+
+            if [ "$response" -ne 201 ]; then
+              echo "Proyecto creado satisfactoriamente"
+            fi
+
+            echo "Estableciendo rama main por defecto"
+            curl -s -f -X POST -u "$SONAR_TOKEN:" \
+              "https://sonarcloud.io/api/project_branches/rename" \
+              -d "name=main" \
+              -d "project="$REPO_NAME"
+            echo "project_created=true" >> $GITHUB_ENV
+          else
+            echo "El proyecto ya existe en sonar"
+            echo "project_created=false" >> $GITHUB_ENV
+          fi
